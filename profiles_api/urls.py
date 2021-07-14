@@ -8,6 +8,7 @@ router.register('hello-viewset', views.HelloViewSet, base_name = 'hello-viewset'
 
 # because of model don't need base_name
 router.register('profile', views.UserProfileViewSet)
+router.register('feed', views.UserProfileFeedViewSet)
 
 urlpatterns = [
     path('hello-view/',views.HelloApiView.as_view()),

@@ -4,6 +4,8 @@ from rest_framework import status , viewsets , filters
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+# if only IsAuthenticatd used then other user cannot see my feed
 from . import serializers, models, permissions
 
 
@@ -116,4 +118,19 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class UserLoginApiView(ObtainAuthToken):
     '''Handle for creating User Authentication token'''
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+ 
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    '''Handle Creating Reading and Updating Profiles Item'''
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+    permission_classes = (
+        permissions.UpdateOwnStatus,
+        IsAuthenticatedOrReadOnly
+    )
+
+    def perform_create(self, serializer):
+        '''Set the User Profile to Login User'''
+        serializer.save(user_profile = self.request.user)
     
